@@ -34,6 +34,7 @@ export class TaskFormComponent {
 
       this.taskService.createTask(newTask).subscribe(() => {
         this.taskForm.reset();
+        this.taskService.notifyTaskCreated();
       });
     }
   }
