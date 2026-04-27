@@ -1,10 +1,28 @@
 {
-    "tasks": [
-        {
-            "id": 1,
-            "title": "Learn React",
-            "description": "Practice CRUD",
-            "completed": false
-        }
-    ]
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Learn React",
+      "description": "Practice CRUD",
+      "completed": false
+    },
+    {
+      "title": "learn gerunds and infinitive in English",
+      "description": "",
+      "completed": false,
+      "id": 2
+    },
+    {
+      "title": "practice speaking",
+      "description": "",
+      "completed": false,
+      "id": 3
+    },
+    {
+      "title": "new task",
+      "description": "test",
+      "completed": false,
+      "id": 4
+    }
+  ]
 }

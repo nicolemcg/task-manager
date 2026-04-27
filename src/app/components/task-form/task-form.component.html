@@ -1,1 +1,25 @@
 <p>task-form works!</p>
+<h2>New task</h2>
+
+<form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+    <input
+        type="text"
+        formControlName="title"
+        placeholder="title"
+    />
+
+    <div *ngIf="taskForm.get('title')?.invalid && taskForm.get('title')?.touched">
+        The title is required
+    </div>
+
+    <textarea
+        formControlName="description"
+        placeholder="description"
+    >
+    </textarea>
+
+    <button type="submit" [disabled]="taskForm.invalid">
+        Save
+    </button>
+    
+</form>
