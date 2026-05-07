@@ -43,4 +43,8 @@ export class TaskListComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
+  editTask(task: Task){
+    this.taskService.selectTask(task);
+  }
 }
