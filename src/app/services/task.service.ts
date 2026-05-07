@@ -14,6 +14,9 @@ export class TaskService {
   private taskCreatedSource = new Subject<void>();
   taskCreated$ = this.taskCreatedSource.asObservable();
 
+  private taskSelectedSource = new Subject<Task>();
+  taskSelected$ = this.taskSelectedSource.asObservable();
+
   constructor(private http: HttpClient) {}
 
   getTasks(): Observable<Task[]> {
@@ -29,6 +32,14 @@ export class TaskService {
   }
 
   deleteTask(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/{id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  updateTask(id: number, task: Task){
+    return this.http.put<Task>(`${this.apiUrl}/${id}`, task);
+  }
+
+  selectTask(task: Task){
+    this.taskSelectedSource.next(task);
   }
 }

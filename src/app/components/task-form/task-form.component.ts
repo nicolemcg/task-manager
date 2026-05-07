@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { TaskService } from '../../services/task.service';
+import { Subject, takeUntil } from 'rxjs';
+import { OnInit, OnDestroy } from '@angular/core';
 
 @Component({
   selector: 'app-task-form',
@@ -8,9 +10,11 @@ import { TaskService } from '../../services/task.service';
   templateUrl: './task-form.component.html',
   styleUrl: './task-form.component.css'
 })
-export class TaskFormComponent {
+export class TaskFormComponent implements OnInit, OnDestroy{
 
   taskForm: FormGroup;
+  selectedTaskId: number | null = null ;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
@@ -19,6 +23,20 @@ export class TaskFormComponent {
     this.taskForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
       description: ['']
+    });
+  }
+
+  ngOnInit(): void{
+    this.taskService.taskSelected$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(task => {
+
+        this.selectedTaskId = task.id!;
+
+        this.taskForm.patchValue({ 
+          title: task.title,
+          description: task.description
+        })
     });
   }
 
@@ -32,10 +50,27 @@ export class TaskFormComponent {
         completed: false
       };
 
-      this.taskService.createTask(newTask).subscribe(() => {
-        this.taskForm.reset();
-        this.taskService.notifyTaskCreated();
-      });
+      if(this.selectedTaskId){
+        this.taskService.updateTask(this.selectedTaskId, newTask).subscribe(()=>{
+          this.resetForm();
+          this.taskService.notifyTaskCreated();
+        });
+      } else {
+        this.taskService.createTask(newTask).subscribe(() => {
+          this.resetForm();
+          this.taskService.notifyTaskCreated();
+        });
+      }
     }
+  }
+
+  resetForm(){
+    this.taskForm.reset();
+    this.selectedTaskId = null;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

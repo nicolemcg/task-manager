@@ -6,5 +6,6 @@
     <li *ngFor="let task of tasks">
         {{ task.title }}
         <button (click)="deleteTask(task.id!)">Delete</button>
+        <button (click)="editTask(task)">Edit</button>
     </li>
 </ul>
