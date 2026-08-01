@@ -3,6 +3,8 @@ import { Task } from '../../models/task.model';
 import { TaskService } from '../../services/task.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators'
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-task-list',
@@ -15,21 +17,19 @@ export class TaskListComponent implements OnInit, OnDestroy {
   tasks: Task[] = [];
   private destroy$ = new Subject<void>();
 
-  constructor(private taskService: TaskService){}
+  constructor(
+    private taskService: TaskService,
+    private router: Router
+    ){}
 
   ngOnInit(): void {
     this.loadTasks();
-
-    this.taskService.taskCreated$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe(()=> {
-      this.loadTasks();
-    });
   }
 
   loadTasks() {
     this.taskService.getTasks().subscribe(data => {
       this.tasks = data;
+       console.log(this.tasks);
     })
   }
 
@@ -45,6 +45,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
   }
 
   editTask(task: Task){
-    this.taskService.selectTask(task);
+    this.router.navigate(['/tasks/edit', task.id]);
   }
 }

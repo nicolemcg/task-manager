@@ -39,7 +39,9 @@ export class TaskService {
     return this.http.put<Task>(`${this.apiUrl}/${id}`, task);
   }
 
-  selectTask(task: Task){
-    this.taskSelectedSource.next(task);
+  getTaskById(id:number){
+    return this.http.get<Task>(
+      `${this.apiUrl}/${id}`
+    )
   }
 }

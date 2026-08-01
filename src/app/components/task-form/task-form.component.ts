@@ -3,6 +3,7 @@ import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { TaskService } from '../../services/task.service';
 import { Subject, takeUntil } from 'rxjs';
 import { OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-task-form',
@@ -18,7 +19,9 @@ export class TaskFormComponent implements OnInit, OnDestroy{
 
   constructor(
     private fb: FormBuilder,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private route: ActivatedRoute,
+    private router: Router
   ){
     this.taskForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
@@ -27,6 +30,17 @@ export class TaskFormComponent implements OnInit, OnDestroy{
   }
 
   ngOnInit(): void{
+    const id = this.route.snapshot.paramMap.get('id');
+
+    if(id){
+      this.selectedTaskId = +id;
+      this.taskService
+        .getTaskById(this.selectedTaskId)
+        .subscribe(task => {
+          this.taskForm.patchValue(task)
+        });
+    }
+
     this.taskService.taskSelected$
       .pipe(takeUntil(this.destroy$))
       .subscribe(task => {
@@ -53,12 +67,12 @@ export class TaskFormComponent implements OnInit, OnDestroy{
       if(this.selectedTaskId){
         this.taskService.updateTask(this.selectedTaskId, newTask).subscribe(()=>{
           this.resetForm();
-          this.taskService.notifyTaskCreated();
+          this.router.navigate(['/tasks']);
         });
       } else {
         this.taskService.createTask(newTask).subscribe(() => {
           this.resetForm();
-          this.taskService.notifyTaskCreated();
+          this.router.navigate(['/tasks']);
         });
       }
     }
